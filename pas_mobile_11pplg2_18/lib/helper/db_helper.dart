@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:pas_mobile_11pplg2_18/models/tvshowmodel.dart';
@@ -26,24 +24,30 @@ class DBHelper {
       path,
       version: 1,
       onCreate: (db, version) async {
-        await db.execute(
-          'CREATE TABLE favorites(id INTEGER PRIMARY KEY AUTOINCREMENT, tvshow_id INTEGER UNIQUE, name TEXT, image TEXT, data TEXT)',
-        );
+        await db.execute('''
+          CREATE TABLE favorites(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tvshow_id INTEGER UNIQUE,
+            name TEXT,
+            image TEXT,
+            data TEXT
+          )
+        ''');
       },
     );
   }
 
   Future<int> insertFavorite(Tvshowmodel tvshow) async {
     final client = await db;
-    final map = {
-      'tvshow_id': tvshow.id,
-      'name': tvshow.name,
-      'image': tvshow.image,
-      'data': jsonEncode(tvshow.toJson()),
-    };
+
     return client.insert(
       'favorites',
-      map,
+      {
+        'tvshow_id': tvshow.id,
+        'name': tvshow.name,
+        'image': jsonEncode(tvshow.image.toJson()),   
+        'data': jsonEncode(tvshow.toJson()),        
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -72,22 +76,13 @@ class DBHelper {
   Future<List<Tvshowmodel>> getFavorites() async {
     final client = await db;
     final rows = await client.query('favorites', orderBy: 'id DESC');
-    return rows.map((r) {
-      final data = r['data'] as String?;
-      if (data != null && data.isNotEmpty) {
-         Tvshowmodel.fromJson(jsonDecode(data));
-      }
 
-      return Tvshowmodel(
-        id: (r['tvshow_id'] as num).toInt(),
-        name: r['name'] as String? ?? '',
-        image: Image.fromJson(jsonDecode(r['image'] as String)),
-        url: r['url'] as String? ?? '',
-        type: Type.SCRIPTED,
-        language: languageValues.map['English']!,
-        rating: Rating(average: 0.0),
-       
-      );
+    return rows.map((r) {
+      final dataString = r['data'] as String;
+
+      final map = jsonDecode(dataString) as Map<String, dynamic>;
+
+      return Tvshowmodel.fromJson(map);  
     }).toList();
   }
 }

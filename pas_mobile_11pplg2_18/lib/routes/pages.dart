@@ -5,6 +5,7 @@ import 'package:pas_mobile_11pplg2_18/pages/login_page.dart';
 import 'package:pas_mobile_11pplg2_18/pages/main_page.dart';
 import 'package:pas_mobile_11pplg2_18/pages/profile_page.dart';
 import 'package:pas_mobile_11pplg2_18/pages/register_page.dart';
+import 'package:pas_mobile_11pplg2_18/pages/splashscreen_page.dart';
 import 'package:pas_mobile_11pplg2_18/pages/tvshow_page.dart';
 import 'package:pas_mobile_11pplg2_18/routes/routes.dart';
 import 'package:get/route_manager.dart';
@@ -18,6 +19,7 @@ class AppPages {
     GetPage(name: AppRoutes.tvshowpage, page: () => TvshowPage(), binding: allbinding()),
     GetPage(name: AppRoutes.favoritepage, page: () => FavoritePage(), binding: allbinding()),
     GetPage(name: AppRoutes.profilepage, page: () => ProfilePage(), binding: allbinding()),
+    GetPage(name: AppRoutes.SplashPage, page: () => SplashPage(), binding: allbinding()),
    
   ];
 }
